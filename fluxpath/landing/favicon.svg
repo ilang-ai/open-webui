@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+<style>.p{stroke:#15171a}.d{fill:#c2410c}@media (prefers-color-scheme:dark){.p{stroke:#eceae4}.d{fill:#f97316}}</style>
+<path class="p" d="M3 23c7 0 7-14 13-14s6 14 13 14" stroke-width="2.6" stroke-linecap="round"/>
+<rect class="d" x="12.2" y="5.2" width="7.6" height="7.6" rx="1.4" transform="rotate(45 16 9)"/>
+</svg>

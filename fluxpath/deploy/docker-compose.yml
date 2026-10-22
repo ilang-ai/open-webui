@@ -1,0 +1,37 @@
+# FluxPath app (app.fluxpath.app): Open WebUI behind a Cloudflare Tunnel. The app port is bound to
+# loopback only; the public way in is the tunnel. The landing page (fluxpath.app) is a separate static site.
+#
+#   cp fluxpath.env.example fluxpath.env    # fill in the secrets
+#   cp tunnel.env.example tunnel.env        # fill in the tunnel token
+#   docker compose up -d
+
+services:
+  fluxpath:
+    # Pinned upstream release, unmodified. The slim image does not bundle embedding models.
+    image: ghcr.io/open-webui/open-webui:v0.12.3-slim
+    restart: unless-stopped
+    env_file: fluxpath.env
+    # loopback only, for setup scripts on the machine itself; the public way in is the tunnel
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - fluxpath-data:/app/backend/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    # tunnel.env holds TUNNEL_TOKEN, the token of the remotely managed tunnel whose public
+    # hostname app.fluxpath.app points at http://fluxpath:8080
+    env_file: tunnel.env
+    depends_on:
+      - fluxpath
+
+volumes:
+  fluxpath-data:
